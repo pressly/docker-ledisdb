@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     ca-certificates curl git-core \
     g++ dh-autoreconf pkg-config libgflags-dev
 
-# Install Snappy lib
+# Install Snappy lib 1.1.2
 ENV SNAPPY_DIR /usr/local/snappy
 RUN cd /tmp && git clone https://github.com/siddontang/snappy.git && \
   cd ./snappy && \
@@ -15,18 +15,18 @@ RUN cd /tmp && git clone https://github.com/siddontang/snappy.git && \
   ./configure --prefix=$SNAPPY_DIR && \
   make && make install
 
-# Install Rocksdb
+# Install Rocksdb 3.5
 RUN cd /tmp && git clone https://github.com/facebook/rocksdb.git && \
   cd rocksdb && \
   git checkout -b 3.5.fb origin/3.5.fb && \
   make shared_lib && \
   mkdir -p /usr/local/rocksdb/lib && \
   mkdir /usr/local/rocksdb/include && \
-  cp librocksdb.so /usr/local/lib && \
-  cp -r include/rocksdb /usr/local/include/ && \
+  cp librocksdb.so /usr/local/rocksdb/lib && \
+  cp -r include /usr/local/rocksdb/ && \
   ln -s /usr/local/rocksdb/lib/librocksdb.so /usr/lib/librocksdb.so
 
-# Install Leveldb
+# Install Leveldb 0.17
 ENV LEVELDB_DIR /usr/local/leveldb
 RUN cd /tmp && git clone https://github.com/siddontang/leveldb.git && \
   cd ./leveldb && \
@@ -56,4 +56,4 @@ RUN \
 
 EXPOSE 6380
 
-CMD ["bash"]
+CMD $GOPATH/bin/ledis-server -config=/etc/ledisdb.conf
