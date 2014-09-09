@@ -6,7 +6,7 @@ A docker image for https://github.com/siddontang/ledisdb with Rocksdb and Leveld
 
 Server:
 ```
-$ docker run --name=ledisdb -d -p 6380:6380 -v /data/etc/ledisdb.conf:/etc/ledisdb.conf pressly/ledisdb
+$ docker run --name=ledisdb -d -p 6380:6380 -v /data/etc/ledisdb.conf:/etc/ledisdb.conf -v /data:/data pressly/ledisdb
 ```
 
 Client:
