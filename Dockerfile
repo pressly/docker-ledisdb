@@ -41,8 +41,8 @@ RUN cd /tmp && git clone https://github.com/siddontang/leveldb.git && \
   ln -s /usr/local/leveldb/lib/libleveldb.so.1 /usr/lib/libleveldb.so.1
 
 
-# Install Go 1.3.1
-RUN curl -s https://storage.googleapis.com/golang/go1.3.1.linux-amd64.tar.gz | tar -v -C /usr/local -xz
+# Install Go 1.3.2
+RUN curl -s https://storage.googleapis.com/golang/go1.3.2.linux-amd64.tar.gz | tar -v -C /usr/local -xz
 ENV GOPATH /go
 ENV GOROOT /usr/local/go
 ENV PATH /usr/local/go/bin:/go/bin:/usr/local/bin:$PATH
