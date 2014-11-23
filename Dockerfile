@@ -1,10 +1,9 @@
 # Ledisdb with Rocksdb and Leveldb
-
 FROM ubuntu:14.04
 MAINTAINER Peter Kieltyka <peter@pressly.com>
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
-    ca-certificates curl git-core \
+    ca-certificates curl git-core mercurial \
     g++ dh-autoreconf pkg-config libgflags-dev
 
 # Install Snappy lib 1.1.2
@@ -15,10 +14,10 @@ RUN cd /tmp && git clone https://github.com/siddontang/snappy.git && \
   ./configure --prefix=$SNAPPY_DIR && \
   make && make install
 
-# Install Rocksdb 3.5
+# Install Rocksdb 3.8
 RUN cd /tmp && git clone https://github.com/facebook/rocksdb.git && \
   cd rocksdb && \
-  git checkout -b 3.5.fb origin/3.5.fb && \
+  git checkout -b 3.8.fb origin/3.8.fb && \
   make shared_lib && \
   mkdir -p /usr/local/rocksdb/lib && \
   mkdir /usr/local/rocksdb/include && \
@@ -26,7 +25,7 @@ RUN cd /tmp && git clone https://github.com/facebook/rocksdb.git && \
   cp -r include /usr/local/rocksdb/ && \
   ln -s /usr/local/rocksdb/lib/librocksdb.so /usr/lib/librocksdb.so
 
-# Install Leveldb 0.17
+# Install Leveldb 1.18
 ENV LEVELDB_DIR /usr/local/leveldb
 RUN cd /tmp && git clone https://github.com/siddontang/leveldb.git && \
   cd ./leveldb && \
@@ -41,18 +40,22 @@ RUN cd /tmp && git clone https://github.com/siddontang/leveldb.git && \
   ln -s /usr/local/leveldb/lib/libleveldb.so.1 /usr/lib/libleveldb.so.1
 
 
-# Install Go 1.3.2
-RUN curl -s https://storage.googleapis.com/golang/go1.3.2.linux-amd64.tar.gz | tar -v -C /usr/local -xz
+# Install Go 1.3.3
+RUN curl -s https://storage.googleapis.com/golang/go1.3.3.linux-amd64.tar.gz | tar -v -C /usr/local -xz
 ENV GOPATH /go
 ENV GOROOT /usr/local/go
 ENV PATH /usr/local/go/bin:/go/bin:/usr/local/bin:$PATH
+
+# Install Godep tool
+RUN go get github.com/tools/godep
 
 # Install Ledisdb
 RUN \
   mkdir -p $GOPATH/src/github.com/siddontang/ledisdb && \
   cd $GOPATH/src/github.com/siddontang && \
   git clone https://github.com/siddontang/ledisdb.git && \
-  cd ledisdb && make
+  cd ledisdb && git checkout tags/v0.4 && \
+  godep restore && make
 
 EXPOSE 6380
 
